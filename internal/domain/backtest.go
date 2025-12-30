@@ -34,16 +34,15 @@ func (b BacktestStatus) String() string {
 }
 
 type Backtest struct {
-	ID 				uuid.UUID
-	StrategyID 		string
-	Status 			BacktestStatus
-	Symbol 			string
-	StartDate 		time.Time
-	EndDate 		time.Time
-	InitialCapital 	float64
-	CreatedAt 		time.Time
-	UpdatedAt 		time.Time
-	CompletedAt 	*time.Time
-	ErrorMessage 	string
+	ID             uuid.UUID
+	StrategyID     string
+	Status         BacktestStatus
+	Symbol         string
+	StartDate      time.Time
+	EndDate        time.Time
+	InitialCapital float64
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	CompletedAt    *time.Time
+	ErrorMessage   string
 }
-
