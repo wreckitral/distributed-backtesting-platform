@@ -4,16 +4,18 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	goose "github.com/pressly/goose/v3"
+	"github.com/pressly/goose/v3"
 	"github.com/wreckitral/distributed-backtesting-platform/internal/config"
 )
 
 func main() {
-	if err := godotenv.Load(".env"); err != nil {
-		log.Println("Warning: .env file not found")
+	if err := godotenv.Load(); err != nil {
+		log.Println("Warning: .env file not found, using environment variables")
 	}
 
 	cfg, err := config.Load()
@@ -23,17 +25,20 @@ func main() {
 
 	connStr := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		cfg.Database.DBHost, cfg.Database.DBPort, cfg.Database.DBUser,
-		cfg.Database.DBPassword, cfg.Database.DBName,
+		cfg.Database.DBHost,
+		cfg.Database.DBPort,
+		cfg.Database.DBUser,
+		cfg.Database.DBPassword,
+		cfg.Database.DBName,
 	)
 
 	if err := goose.SetDialect("postgres"); err != nil {
-        log.Fatalf("Failed to set dialect: %v", err)
-    }
+		log.Fatalf("Failed to set dialect: %v", err)
+	}
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Fatalf("Failed to open database: %v", err)
 	}
 	defer db.Close()
 
@@ -41,12 +46,19 @@ func main() {
 		log.Fatalf("Failed to ping database: %v", err)
 	}
 
-	migrationsDir := "scripts/migrations"
+	log.Println("Connected to database successfully")
+
+	migrationsDir := filepath.Join("scripts", "migrations")
+
+	if _, err := os.Stat(migrationsDir); os.IsNotExist(err) {
+		migrationsDir = filepath.Join("..", "..", "scripts", "migrations")
+	}
+
+	log.Printf("Using migrations directory: %s", migrationsDir)
 
 	if err := goose.Up(db, migrationsDir); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
 	log.Println("Migrations completed successfully")
-
 }

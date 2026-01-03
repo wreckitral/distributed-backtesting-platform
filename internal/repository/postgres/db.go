@@ -10,32 +10,62 @@ import (
 	"github.com/wreckitral/distributed-backtesting-platform/internal/config"
 )
 
-func initDB(cfg config.Database) (*sql.DB, error) {
+func NewPostgresDB(cfg config.Database) (*sql.DB, error) {
 	connStr := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName,
 	)
 
 	db, err := sql.Open("postgres", connStr)
-    if err != nil {
-        return nil, fmt.Errorf("error opening db: %w", err)
-    }
+	if err != nil {
+		return nil, fmt.Errorf("error opening database: %w", err)
+	}
 
-	db.SetMaxOpenConns(25)
-	db.SetMaxIdleConns(25)
-	// this is critical for load balancer which silently drop idle connections
-	// after a few minutes
-	db.SetConnMaxLifetime(5 * time.Minute)
-	db.SetConnMaxIdleTime(2 * time.Minute)
+	maxOpen := cfg.MaxOpenConns
+	if maxOpen == 0 {
+		maxOpen = 25
+	}
+	db.SetMaxOpenConns(maxOpen)
 
-	// verify connection
-    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-    defer cancel()
+	maxIdle := cfg.MaxIdleConns
+	if maxIdle == 0 {
+		maxIdle = 5
+	}
+	db.SetMaxIdleConns(maxIdle)
 
-    if err := db.PingContext(ctx); err != nil {
-        return nil, fmt.Errorf("error connecting to db: %w", err)
-    }
+	maxLifetime := cfg.ConnMaxLifetime
+	if maxLifetime == 0 {
+		maxLifetime = 5 * time.Minute
+	}
+	db.SetConnMaxLifetime(maxLifetime)
 
-    return db, nil
+	maxIdleTime := cfg.ConnMaxIdleTime
+	if maxIdleTime == 0 {
+		maxIdleTime = 2 * time.Minute
+	}
+	db.SetConnMaxIdleTime(maxIdleTime)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := db.PingContext(ctx); err != nil {
+		db.Close()
+		return nil, fmt.Errorf("error connecting to database: %w", err)
+	}
+
+	return db, nil
 }
 
+func Close(db *sql.DB) error {
+	if db != nil {
+		return db.Close()
+	}
+	return nil
+}
+
+func HealthCheck(ctx context.Context, db *sql.DB) error {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	return db.PingContext(ctx)
+}
