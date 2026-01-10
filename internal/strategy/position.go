@@ -3,10 +3,10 @@ package strategy
 import "time"
 
 type Position struct {
-	Symbol string
-	Shares float64
+	Symbol     string
+	Shares     float64
 	EntryPrice float64
-	EntryTime time.Time
+	EntryTime  time.Time
 }
 
 func (p *Position) IsOpen() bool {

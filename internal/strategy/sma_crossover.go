@@ -2,13 +2,13 @@ package strategy
 
 type SMACrossover struct {
 	ShortPeriod int
-	LongPeriod int
+	LongPeriod  int
 }
 
 func NewSMACrossover(shortPeriod, longPeriod int) *SMACrossover {
 	return &SMACrossover{
 		ShortPeriod: shortPeriod,
-		LongPeriod: longPeriod,
+		LongPeriod:  longPeriod,
 	}
 }
 

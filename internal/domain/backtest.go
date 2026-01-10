@@ -46,4 +46,3 @@ func (b BacktestStatus) String() string {
 		return "UNKNOWN"
 	}
 }
-

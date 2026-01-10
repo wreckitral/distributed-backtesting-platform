@@ -11,8 +11,8 @@ import (
 )
 
 type Executor struct {
-	strategy Strategy
-	provider marketdata.Provider
+	strategy    Strategy
+	provider    marketdata.Provider
 	initialCash float64
 }
 
@@ -41,11 +41,11 @@ func (e *Executor) Run(ctx context.Context, symbol string, start, end time.Time)
 
 	for i, bar := range bars {
 		strategyCtx := &Context{
-			Symbol: symbol,
-			CurrentBar: bar,
-			HistoricalBars: bars[0:i], // all bars before today
+			Symbol:          symbol,
+			CurrentBar:      bar,
+			HistoricalBars:  bars[0:i], // all bars before today
 			CurrentPosition: position,
-			Cash: cash,
+			Cash:            cash,
 		}
 
 		signal, err := e.strategy.Generate(strategyCtx)

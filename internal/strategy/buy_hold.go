@@ -1,7 +1,7 @@
 package strategy
 
 // buyHold is the simplest strategy, buy first day and hold forever
-type BuyHold struct {}
+type BuyHold struct{}
 
 func NewBuyHold() *BuyHold {
 	return &BuyHold{}
@@ -20,4 +20,3 @@ func (s *BuyHold) Generate(ctx *Context) (Signal, error) {
 	// if we already have a position, hold
 	return SignalHold, nil
 }
-

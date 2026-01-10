@@ -17,9 +17,9 @@ import (
 )
 
 type CSVProvider struct {
-    dataDir string
-    cache   map[string][]domain.Bar
-    mu      sync.RWMutex
+	dataDir string
+	cache   map[string][]domain.Bar
+	mu      sync.RWMutex
 }
 
 func NewCSVProvider(dataDir string) (*CSVProvider, error) {
