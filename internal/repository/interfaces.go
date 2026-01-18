@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 	"github.com/wreckitral/distributed-backtesting-platform/internal/domain"
 )
@@ -31,6 +32,7 @@ type TradeRepository interface {
 	Create(ctx context.Context, trade *domain.Trade) error
 	CreateBatch(ctx context.Context, trades []*domain.Trade) error
 	GetByID(ctx context.Context, id uuid.UUID) (*domain.Trade, error)
+	GetByBacktestID(ctx context.Context, backtestID uuid.UUID) ([]*domain.Trade, error)
 	ListByBacktest(ctx context.Context, backtestID uuid.UUID) ([]*domain.Trade, error)
 	DeleteByBacktest(ctx context.Context, backtestID uuid.UUID) error
 	CountByBacktest(ctx context.Context, backtestID uuid.UUID) (int, error)

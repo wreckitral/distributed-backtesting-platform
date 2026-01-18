@@ -184,7 +184,7 @@ func (r *backtestRepository) MarkAsCompleted(ctx context.Context, id uuid.UUID) 
 	result, err := r.db.ExecContext(
 		ctx,
 		query,
-		domain.StatusCompleted.String(),
+		domain.BacktestStatusCompleted.String(),
 		now,
 		now,
 		id,
@@ -216,7 +216,7 @@ func (r *backtestRepository) MarkAsFailed(ctx context.Context, id uuid.UUID, err
 	result, err := r.db.ExecContext(
 		ctx,
 		query,
-		domain.StatusFailed.String(),
+		domain.BacktestStatusFailed.String(),
 		errorMsg,
 		now,
 		now,
@@ -429,16 +429,16 @@ func (r *backtestRepository) ListByStrategy(ctx context.Context, strategyID stri
 func parseStatus(s string) domain.BacktestStatus {
 	switch s {
 	case "PENDING":
-		return domain.StatusPending
+		return domain.BacktestStatusPending
 	case "QUEUED":
-		return domain.StatusQueued
+		return domain.BacktestStatusQueued
 	case "RUNNING":
-		return domain.StatusRunning
+		return domain.BacktestStatusRunning
 	case "COMPLETED":
-		return domain.StatusCompleted
+		return domain.BacktestStatusCompleted
 	case "FAILED":
-		return domain.StatusFailed
+		return domain.BacktestStatusFailed
 	default:
-		return domain.StatusPending
+		return domain.BacktestStatusPending
 	}
 }

@@ -7,11 +7,11 @@ func TestBacktestStatusString(t *testing.T) {
 		status   BacktestStatus
 		expected string
 	}{
-		{StatusPending, "PENDING"},
-		{StatusQueued, "QUEUED"},
-		{StatusRunning, "RUNNING"},
-		{StatusCompleted, "COMPLETED"},
-		{StatusFailed, "FAILED"},
+		{BacktestStatusPending, "PENDING"},
+		{BacktestStatusQueued, "QUEUED"},
+		{BacktestStatusRunning, "RUNNING"},
+		{BacktestStatusCompleted, "COMPLETED"},
+		{BacktestStatusFailed, "FAILED"},
 	}
 
 	for _, tt := range tests {

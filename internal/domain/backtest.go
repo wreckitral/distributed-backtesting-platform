@@ -23,24 +23,24 @@ type Backtest struct {
 type BacktestStatus int
 
 const (
-	StatusPending BacktestStatus = iota
-	StatusQueued
-	StatusRunning
-	StatusCompleted
-	StatusFailed
+	BacktestStatusPending BacktestStatus = iota
+	BacktestStatusQueued
+	BacktestStatusRunning
+	BacktestStatusCompleted
+	BacktestStatusFailed
 )
 
 func (b BacktestStatus) String() string {
 	switch b {
-	case StatusPending:
+	case BacktestStatusPending:
 		return "PENDING"
-	case StatusQueued:
+	case BacktestStatusQueued:
 		return "QUEUED"
-	case StatusRunning:
+	case BacktestStatusRunning:
 		return "RUNNING"
-	case StatusCompleted:
+	case BacktestStatusCompleted:
 		return "COMPLETED"
-	case StatusFailed:
+	case BacktestStatusFailed:
 		return "FAILED"
 	default:
 		return "UNKNOWN"

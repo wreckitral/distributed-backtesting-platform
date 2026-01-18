@@ -7,6 +7,7 @@ import (
 )
 
 type Metrics struct {
+	ID                  uuid.UUID
 	BacktestID          uuid.UUID
 	TotalReturn         float64
 	AnnualizedReturn    float64

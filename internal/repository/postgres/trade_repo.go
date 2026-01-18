@@ -153,6 +153,49 @@ func (r *tradeRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Tr
 	return trade, nil
 }
 
+func (r *tradeRepository) GetByBacktestID(ctx context.Context, backtestID uuid.UUID) ([]*domain.Trade, error) {
+	query := `
+        SELECT id, backtest_id, symbol, direction, quantity, price,
+               commission, timestamp, pnl, cumulative_pnl
+        FROM trades
+        WHERE backtest_id = $1
+        ORDER BY timestamp ASC
+    `
+
+	rows, err := r.db.QueryContext(ctx, query, backtestID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query trades: %w", err)
+	}
+	defer rows.Close()
+
+	var trades []*domain.Trade
+	for rows.Next() {
+		trade := &domain.Trade{}
+		err := rows.Scan(
+			&trade.ID,
+			&trade.BacktestID,
+			&trade.Symbol,
+			&trade.Direction,
+			&trade.Quantity,
+			&trade.Price,
+			&trade.Commission,
+			&trade.Timestamp,
+			&trade.PnL,
+			&trade.CumulativePnL,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan trade: %w", err)
+		}
+		trades = append(trades, trade)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating trades: %w", err)
+	}
+
+	return trades, nil
+}
+
 func (r *tradeRepository) ListByBacktest(ctx context.Context, backtestID uuid.UUID) ([]*domain.Trade, error) {
 	query := `
 		SELECT id, backtest_id, symbol, direction, quantity, price,

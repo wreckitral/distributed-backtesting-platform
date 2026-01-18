@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wreckitral/distributed-backtesting-platform/internal/domain"
 	"github.com/google/uuid"
+	"github.com/wreckitral/distributed-backtesting-platform/internal/domain"
 )
 
 // TestCalculateEmptyTrades tests metrics with no trades
