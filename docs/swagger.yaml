@@ -1,0 +1,296 @@
+basePath: /
+definitions:
+  dto.BacktestResponse:
+    properties:
+      created_at:
+        example: "2025-01-15T10:30:00Z"
+        type: string
+      end_date:
+        example: "2024-12-31"
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      initial_capital:
+        example: 10000
+        type: number
+      start_date:
+        example: "2024-01-01"
+        type: string
+      status:
+        example: completed
+        type: string
+      strategy_id:
+        example: SMA Crossover
+        type: string
+      symbol:
+        example: AAPL
+        type: string
+      updated_at:
+        example: "2025-01-15T10:35:00Z"
+        type: string
+    type: object
+  dto.CreateBacktestRequest:
+    properties:
+      end_date:
+        example: "2024-12-31"
+        type: string
+      initial_capital:
+        example: 10000
+        type: number
+      start_date:
+        example: "2024-01-01"
+        type: string
+      strategy_id:
+        example: buy_hold
+        type: string
+      symbol:
+        example: AAPL
+        type: string
+    required:
+    - end_date
+    - initial_capital
+    - start_date
+    - strategy_id
+    - symbol
+    type: object
+  dto.ErrorResponse:
+    properties:
+      error:
+        example: Invalid request
+        type: string
+      message:
+        example: strategy field is required
+        type: string
+    type: object
+  dto.ListResponse:
+    properties:
+      items: {}
+      limit:
+        example: 20
+        type: integer
+      page:
+        example: 1
+        type: integer
+      total:
+        example: 42
+        type: integer
+    type: object
+  dto.MetricsResponse:
+    properties:
+      backtest_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      losing_trades:
+        example: 2
+        type: integer
+      max_drawdown:
+        example: 15.5
+        type: number
+      profit_factor:
+        example: 4.33
+        type: number
+      return_pct:
+        example: 25
+        type: number
+      sharpe_ratio:
+        example: 1.82
+        type: number
+      total_return:
+        example: 2500
+        type: number
+      total_trades:
+        example: 8
+        type: integer
+      win_rate:
+        example: 75
+        type: number
+      winning_trades:
+        example: 6
+        type: integer
+    type: object
+  dto.SuccessResponse:
+    properties:
+      data: {}
+      message:
+        example: Backtest created successfully
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: API for distributed financial backtesting platform
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Distributed Backtesting Platform API
+  version: "1.0"
+paths:
+  /api/v1/backtests:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all backtests
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListResponse'
+      summary: List all backtests
+      tags:
+      - backtests
+    post:
+      consumes:
+      - application/json
+      description: Create and execute a backtest with the given parameters
+      parameters:
+      - description: Backtest parameters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateBacktestRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.BacktestResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Create a new backtest
+      tags:
+      - backtests
+  /api/v1/backtests/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a backtest and all associated data
+      parameters:
+      - description: Backtest ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Delete a backtest
+      tags:
+      - backtests
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific backtest
+      parameters:
+      - description: Backtest ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.BacktestResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get backtest by ID
+      tags:
+      - backtests
+  /api/v1/backtests/{id}/metrics:
+    get:
+      consumes:
+      - application/json
+      description: Get performance metrics for a specific backtest
+      parameters:
+      - description: Backtest ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MetricsResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get backtest metrics
+      tags:
+      - backtests
+  /api/v1/backtests/{id}/trades:
+    get:
+      consumes:
+      - application/json
+      description: Get all trades for a specific backtest
+      parameters:
+      - description: Backtest ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get backtest trades
+      tags:
+      - backtests
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Check if the API is running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - health
+schemes:
+- http
+- https
+swagger: "2.0"
